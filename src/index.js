@@ -234,16 +234,30 @@
   }
 
   function collapseGitlabNotes() {
-    const tasks = collectTasks();
-    for (let i = 0; i < tasks.length; i++) {
-      const task = tasks[i];
-      if (task.checked || task.confirmChecked) {
-        task.domWrapper.classList.add('collapse-item')
-      }
-      if (task.priority === 'A') {
-        task.domWrapper.classList.add('highest-level-bug');
+    const collapsedNotes = document.querySelectorAll('.note.collapse-item');
+    if (collapsedNotes.length > 0) {
+      collapsedNotes.forEach(note => note.classList.remove('collapse-item'));
+    } else {
+      const tasks = collectTasks();
+      for (let i = 0; i < tasks.length; i++) {
+        const task = tasks[i];
+        if (task.checked || task.confirmChecked) {
+          task.domWrapper.classList.add('collapse-item');
+        }
+        if (task.priority === 'A') {
+          task.domWrapper.classList.add('highest-level-bug');
+        }
       }
     }
+  }
+
+  function initCollapseEvent() {
+    document.addEventListener('click', (e) => {
+      const note = e.target.closest('.note.collapse-item');
+      if (note) {
+        note.classList.remove('collapse-item');
+      }
+    }, true);
   }
 
   function scrollToNote(noteID) {
@@ -489,6 +503,10 @@
   }
 
   GM_addStyle(`
+  .notes .note.collapse-item {
+    cursor: pointer;
+  }
+
   .notes .note.collapse-item .timeline-content {
     height: 100px;
     background-color: #67c23a;
@@ -556,6 +574,8 @@
   `);
 
   createMenu();
+
+  initCollapseEvent();
 
   unsafeWindow.$issueHelper = issueHelper;
 })();
