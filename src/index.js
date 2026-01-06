@@ -525,12 +525,14 @@
     100% { outline: 4px solid #409eff; }
   }
 
-  .notes .note.highlighted {
+  .notes .note.highlighted .timeline-avatar img,
+  .notes .note.highlighted .avatar {
     animation: savior-pulse 1s 5; /* 闪烁5次后停止在蓝色状态 */
     outline: 4px solid #409eff;
-    outline-offset: -4px;
-    z-index: 10;
+    outline-offset: 2px;
+    border-radius: 50%;
     position: relative;
+    z-index: 10;
   }
 
   .notes .note.collapse-item {
