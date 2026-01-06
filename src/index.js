@@ -233,6 +233,14 @@
     }
   }
 
+  function updateCollapseButtonState() {
+    const button = document.querySelector('.savior-btn-collapse');
+    if (!button) return;
+    const hasCollapsed = document.querySelector('.note.collapse-item');
+    button.textContent = hasCollapsed ? '展开' : '折叠';
+    button.setAttribute('title', hasCollapsed ? '展开所有已折叠的评论' : '折叠已完成的评论');
+  }
+
   function collapseGitlabNotes() {
     const collapsedNotes = document.querySelectorAll('.note.collapse-item');
     if (collapsedNotes.length > 0) {
@@ -249,6 +257,7 @@
         }
       }
     }
+    updateCollapseButtonState();
   }
 
   function initCollapseEvent() {
@@ -256,6 +265,7 @@
       const note = e.target.closest('.note.collapse-item');
       if (note) {
         note.classList.remove('collapse-item');
+        updateCollapseButtonState();
       }
     }, true);
   }
@@ -291,10 +301,11 @@
     }
   }
 
-  function createMenuItem(content, title, handler) {
+  function createMenuItem(content, title, handler, className) {
     let button = document.createElement('button');
     button.textContent = content;
     button.setAttribute('title', title);
+    if (className) button.classList.add(className);
     button.addEventListener('click', handler);
     return button
   }
@@ -486,7 +497,7 @@
     menuDom.classList.add('savior-menu');
     const menuItems = [
       createMenuItem('导出', '导出CSV', exportAsCSV),
-      createMenuItem('折叠', '折叠已完成的评论', collapseGitlabNotes),
+      createMenuItem('折叠', '折叠已完成的评论', collapseGitlabNotes, 'savior-btn-collapse'),
       createMenuItem('跳转', '跳转至剪切版中的URL', scrollToClipboardNote),
       createMenuItem('Find', '跳转到URL锚点位置', scrollToUrlNote),
     ];
