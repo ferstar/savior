@@ -152,34 +152,17 @@
   }
 
   function parseTask(taskContainer) {
-    // 适配 GitLab 18.x: 寻找任务列表项
     const taskCheckbox = taskContainer.querySelector('input[data-testid="task-list-item-checkbox"], input.task-list-item-checkbox');
-    if (!taskCheckbox) {
-      // 兼容旧版本
-      if (!taskContainer.querySelector('.task-list')) return null;
-    }
+    if (!taskCheckbox) return null;
 
     const task = createTask(taskContainer);
     task.author = taskContainer.querySelector('.note-header-author-name')?.textContent.trim() || '';
     task.link = taskContainer.querySelector('[data-testid="copy-link-action"]')?.dataset.clipboardText || '';
+    task.checked = taskCheckbox.checked;
+    task.title = taskCheckbox.closest('li')?.textContent.trim() || '';
 
-    if (taskCheckbox) {
-      task.checked = taskCheckbox.checked;
-      // 寻找任务标题，通常是复选框旁边的内容
-      task.title = taskCheckbox.closest('li')?.textContent.trim() || '';
-    } else {
-      // 兼容旧版本逻辑
-      const taskItem = taskContainer.querySelector('.task-list-item');
-      const oldInput = taskItem?.querySelector('input');
-      if (oldInput) {
-        task.checked = oldInput.checked;
-        task.title = taskItem.textContent.trim();
-      }
-    }
-    // 获取整个评论内容
     const noteText = taskContainer.querySelector('.note-text');
     task.body = noteText ? noteText.textContent.trim() : '';
-    // 只取首行匹配 ID
     const firstLine = task.title.split('\n')[0];
     const idMatch = firstLine.match(/^(\d+)\.?\s*/) || firstLine.match(/(TC-\d+)/i);
     if (idMatch) {
@@ -213,7 +196,6 @@
   }
 
   function collectTasks() {
-    // 适配 GitLab 18.x: 寻找所有普通评论
     const noteList = document.querySelectorAll('[id^="note_"]:not(.system-note)');
     const tasks = [];
 
@@ -221,7 +203,7 @@
       const taskContainer = noteList[i];
       try {
         const task = parseTask(taskContainer);
-        if (task && (task.checked || task.confirmChecked || taskContainer.querySelector('.task-list, [data-testid="task-list-item-checkbox"]'))) {
+        if (task && (task.checked || task.confirmChecked || taskContainer.querySelector('[data-testid="task-list-item-checkbox"]'))) {
           tasks.push(task);
         }
       } catch (e) {
@@ -232,15 +214,8 @@
   }
 
   function getReply(replayDom) {
-    let noteContentSelector = '.timeline-content .note-body .note-text';
-    // 适配 GitLab 18.x 可能的新选择器
-    if (!replayDom.querySelector(noteContentSelector)) {
-      noteContentSelector = '.note-text';
-    }
-    let noteHeaderSelector = '.timeline-content .note-header';
-    if (!replayDom.querySelector(noteHeaderSelector)) {
-      noteHeaderSelector = '.note-header';
-    }
+    let noteContentSelector = '.note-text';
+    let noteHeaderSelector = '.note-header';
     let noteHeaderDom = replayDom.querySelector(noteHeaderSelector);
     return {
       author: noteHeaderDom?.querySelector('.note-header-author-name')?.textContent.trim() || '',
@@ -252,7 +227,6 @@
     if (task.replies.length > 0) {
       let lastIndex = task.replies.length - 1;
       let reply = task.replies[lastIndex];
-      // 增强判定：支持包含“验证已修复”即可
       return TEST_USERS.includes(reply.author) && reply.content.includes('验证已修复')
     } else {
       return false
@@ -358,7 +332,7 @@
     const matches = format.match(/\$\{.+?\}/g);
     let filename = format;
     matches.forEach((matchStr) => {
-      const result = matchStr.match(/\$\{(?<path>.+)\}/);
+      const result = matchStr.match(/\$\((?<path>.+)\)/);
       const path = result.groups.path;
       filename = filename.replace(matchStr, getValue(path, context))
     })
@@ -582,36 +556,6 @@
   `);
 
   createMenu();
-
-  // const intervalKey = 'MAX_MUTATION_INTERVAL';
-  // const customInterval = localStorage.getItem(intervalKey);
-  // const mutationInterval = customInterval ? parseInt(customInterval) : 10 * 1e3;
-  const URLMatchResult = window.location.hash.match(/#(note_\d+)/);
-  if (URLMatchResult) {
-    /**
-     * It seems Gitlab can jump to right note in URL, it took so long!
-     */
-
-    // let timeoutID = null;
-    // let observer;
-    // function handleMutations(records) {
-    //   records.forEach((record) => {
-    //     if (timeoutID) {
-    //       clearTimeout(timeoutID);
-    //     }
-    //     timeoutID = setTimeout(function() {
-    //       requestAnimationFrame(() => {
-    //         scrollToNoteInURL(URLMatchResult);
-    //         observer.disconnect();
-    //       })
-    //     }, mutationInterval);
-    //   });
-    // }
-    //
-    // observer = new MutationObserver(handleMutations);
-    // const nodeList = document.querySelector('#notes-list')
-    // observer.observe(nodeList, { subtree: true, childList: true, attributes: true });
-  }
 
   unsafeWindow.$issueHelper = issueHelper;
 })();
