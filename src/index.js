@@ -272,7 +272,12 @@
 
   function scrollToNote(noteID) {
     if (noteID) {
-      document.getElementById(noteID).scrollIntoView({ block: 'center' });
+      const el = document.getElementById(noteID);
+      if (el) {
+        document.querySelectorAll('.note.highlighted').forEach(n => n.classList.remove('highlighted'));
+        el.scrollIntoView({ block: 'center' });
+        el.classList.add('highlighted');
+      }
     }
   }
 
@@ -514,6 +519,20 @@
   }
 
   GM_addStyle(`
+  @keyframes savior-pulse {
+    0% { outline: 4px solid #409eff; }
+    50% { outline: 4px solid transparent; }
+    100% { outline: 4px solid #409eff; }
+  }
+
+  .notes .note.highlighted {
+    animation: savior-pulse 1s 5; /* 闪烁5次后停止在蓝色状态 */
+    outline: 4px solid #409eff;
+    outline-offset: -4px;
+    z-index: 10;
+    position: relative;
+  }
+
   .notes .note.collapse-item {
     cursor: pointer;
   }
