@@ -8,7 +8,7 @@
 // @match        https://gitlab.apexdata.com.cn/*/issues/*
 // @grant        GM_addStyle
 // @grant        unsafeWindow
-// @downloadURL https://raw.githubusercontent.com/ferstar/savior/ty/src/index.js
+// @downloadURL https://raw.githubusercontent.com/ferstar/savior/refs/heads/ty/src/index.js
 // ==/UserScript==
 
 (function () {
