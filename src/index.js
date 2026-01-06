@@ -472,7 +472,7 @@
     menuDom.classList.add('savior-menu');
     const menuItems = [
       createMenuItem('导出', '导出CSV', exportAsCSV),
-      createMenuItem('折叠', '折叠评论', collapseGitlabNotes),
+      createMenuItem('折叠', '折叠已完成的评论', collapseGitlabNotes),
       createMenuItem('跳转', '跳转至剪切版中的URL', scrollToClipboardNote),
       createMenuItem('Find', '跳转到URL锚点位置', scrollToUrlNote),
     ];
