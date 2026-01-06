@@ -5,10 +5,10 @@
 // @version      0.3.20
 // @description  Savior of bug track in Gitlab issue!
 // @author       Priestch
-// @match        https://gitpd.paodingai.com/*/issues/*
+// @match        https://gitlab.apexdata.com.cn/*/issues/*
 // @grant        GM_addStyle
 // @grant        unsafeWindow
-// @downloadURL  https://github.com/Priestch/savior/blob/master/src/index.js
+// @downloadURL https://raw.githubusercontent.com/ferstar/savior/ty/src/index.js
 // ==/UserScript==
 
 (function () {
